@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{ title?: string }>()
 
@@ -10,6 +10,8 @@ const navItems = [
   { label: 'Orders', href: '/admin/orders', icon: '📋' },
 ]
 
+const mobileMenuOpen = ref(false)
+
 function logout() {
   router.post('/admin/logout')
 }
@@ -17,7 +19,31 @@ function logout() {
 
 <template>
   <div class="min-h-screen bg-gray-950 flex">
-    <aside class="w-56 bg-gray-900 border-r border-white/[0.06] flex flex-col fixed h-full">
+    <!-- Mobile Menu Button -->
+    <button
+      @click="mobileMenuOpen = !mobileMenuOpen"
+      class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-900 border border-white/[0.06] rounded-lg text-white"
+    >
+      <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+      <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <!-- Overlay -->
+    <div
+      v-if="mobileMenuOpen"
+      @click="mobileMenuOpen = false"
+      class="lg:hidden fixed inset-0 bg-black/60 z-40"
+    />
+
+    <!-- Sidebar -->
+    <aside
+      class="w-56 bg-gray-900 border-r border-white/[0.06] flex flex-col fixed h-full z-40 transition-transform duration-300"
+      :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+    >
       <div class="p-5 border-b border-white/[0.06]">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-xs font-bold text-white font-mono">ICP</div>
@@ -33,6 +59,7 @@ function logout() {
           v-for="item in navItems"
           :key="item.href"
           :href="item.href"
+          @click="mobileMenuOpen = false"
           class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150"
           :class="$page.url.startsWith(item.href) && item.href !== '/admin'
             || $page.url === item.href
@@ -63,13 +90,13 @@ function logout() {
       </div>
     </aside>
 
-    <main class="flex-1 ml-56">
-      <div class="sticky top-0 z-10 bg-gray-900/80 backdrop-blur border-b border-white/[0.06] px-6 py-4 flex items-center justify-between">
-        <h1 class="text-sm font-semibold text-white">{{ title }}</h1>
+    <main class="flex-1 lg:ml-56 w-full">
+      <div class="sticky top-0 z-10 bg-gray-900/80 backdrop-blur border-b border-white/[0.06] px-4 lg:px-6 py-4 flex items-center justify-between">
+        <h1 class="text-sm font-semibold text-white ml-12 lg:ml-0">{{ title }}</h1>
         <slot name="actions" />
       </div>
 
-      <div class="p-6">
+      <div class="p-4 lg:p-6">
         <div
           v-if="$page.props.flash?.success"
           class="mb-4 px-4 py-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm"
