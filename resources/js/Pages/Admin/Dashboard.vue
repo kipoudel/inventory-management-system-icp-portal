@@ -30,7 +30,7 @@ const statusClass: Record<string, string> = {
 <template>
   <AdminLayout title="Dashboard">
     <template #actions>
-      <Link href="/admin/products/create" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors">
+      <Link href="/admin/products" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors">
         + Add Product
       </Link>
     </template>
